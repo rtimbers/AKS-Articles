@@ -15,3 +15,5 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 
+1-terraform/id_rsa_terraform.pub
+1-terraform/id_rsa_terraform
