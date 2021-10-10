@@ -10,19 +10,11 @@ resource "azurerm_kubernetes_cluster" "aks_k2" {
   dns_prefix          = var.dns_name
   kubernetes_version  = var.kubernetes_version
 
-  dynamic "default_node_pool" {
-    for_each = var.agent_pools
-    iterator = pool
-    content {
-      name            = pool.value.name
-      count           = pool.value.count
-      vm_size         = pool.value.vm_size
-      os_type         = pool.value.os_type
-      os_disk_size_gb = pool.value.os_disk_size_gb
-      type            = "VirtualMachineScaleSets"
-      max_pods        = 100
-      vnet_subnet_id  = azurerm_subnet.aks_subnet.id
-    }
+  default_node_pool {
+    name       = "default"
+    node_count = 1
+    vm_size    = "Standard_D2_v2"
+   }
   }
 
   linux_profile {
@@ -57,7 +49,6 @@ resource "azurerm_kubernetes_cluster" "aks_k2" {
 
 output "client_certificate" {
   value = "${azurerm_kubernetes_cluster.aks_k2.kube_config.0.client_certificate}"
-  sensitive = true
 }
 
 output "kube_config" {
