@@ -1,19 +1,114 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@rtimbers 
+nyuen
+/
+AKS-Articles
+Public
+3
+13
+52
+Code
+Issues
+1
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+AKS-Articles/1-terraform/azure-pipelines.yml
+
+Nicolas Yuen moving pipeline file
+Latest commit 3d4d01d on Aug 20, 2019
+ History
+ 0 contributors
+82 lines (77 sloc)  3.16 KB
+   
 # Starter pipeline
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- master
+resources:
+- repo: self
 
-pool:
-  vmImage: ubuntu-latest
+stages:
+- stage: Validate
+  jobs:
+  - job: Validate
+    continueOnError: false
+    steps:
+    - publish: 1-terraform
+      artifact: terraform_out
+    - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
+      displayName: 'Use Terraform v2.71.0'
+      inputs:
+        terraformVersion: 2.71.0
+    - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+      displayName: 'terraform init'
+      inputs:
+        command: init
+        workingDirectory: 1-terraform
+        backendType: azurerm
+        backendServiceArm: 'Azure SPN'
+        backendAzureRmResourceGroupName: 'AKSTerraform-RG'
+        backendAzureRmStorageAccountName: 'nyuenterraformstate'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'demo.terraform.tfstate'
+    - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+      displayName: 'terraform validate'
+      inputs:
+        command: validate
+        workingDirectory: 1-terraform
+ 
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- stage: Deploy
+  jobs:
+    # track deployments on the environment
+  - deployment: Deploy_Terraform
+    pool:
+      vmImage: 'ubuntu-latest'
+    # creates an environment if it doesn’t exist
+    environment: 'DEV'
+    strategy:
+      # default deployment strategy
+      runOnce:
+        deploy:
+          steps:
+          # - download: current
+          #   artifact: terraform_out
+          - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+            displayName: 'terraform init'
+            inputs:
+              command: init
+              workingDirectory: $(Pipeline.Workspace)/terraform_out
+              backendType: azurerm
+              backendServiceArm: 'Azure SPN'
+              backendAzureRmResourceGroupName: 'AKSTerraform-RG'
+              backendAzureRmStorageAccountName: 'nyuenterraformstate'
+              backendAzureRmContainerName: 'tfstate'
+              backendAzureRmKey: 'demo.terraform.tfstate'
+          - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+            displayName: 'terraform plan'
+            inputs:
+              command: plan
+              workingDirectory: $(Pipeline.Workspace)/terraform_out
+              environmentServiceName: 'Azure SPN'
+              secureVarsFile: 'aks_conf.tfvars'
+              commandOptions: '-out $(Pipeline.Workspace)/terraform_out/terraform_aks_out'
+              terraformVersion: 2.71.0
+          - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+            displayName: 'terraform apply'
+            inputs:
+              command: apply
+              workingDirectory: $(Pipeline.Workspace)/terraform_out
+              environmentServiceName: 'Azure SPN'
+              commandOptions: '$(Pipeline.Workspace)/terraform_out/terraform_aks_out'
+              terraformVersion: 2.71.0
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
