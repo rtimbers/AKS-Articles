@@ -14,8 +14,7 @@ resource "azurerm_kubernetes_cluster" "aks_k2" {
     name       = "default"
     node_count = 1
     vm_size    = "Standard_D2_v2"
-   }
-  }
+     }
 
   linux_profile {
     admin_username = var.admin_username
