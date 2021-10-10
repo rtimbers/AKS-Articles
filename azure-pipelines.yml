@@ -26,7 +26,7 @@ stages:
         backendType: azurerm
         backendServiceArm: 'Azure SPN'
         backendAzureRmResourceGroupName: 'AKSTerraform-RG'
-        backendAzureRmStorageAccountName: 'nyuenterraformstate'
+        backendAzureRmStorageAccountName: 'terraformbuild081021'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'demo.terraform.tfstate'
     - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
@@ -59,7 +59,7 @@ stages:
               backendType: azurerm
               backendServiceArm: 'Azure SPN'
               backendAzureRmResourceGroupName: 'AKSTerraform-RG'
-              backendAzureRmStorageAccountName: 'nyuenterraformstate'
+              backendAzureRmStorageAccountName: 'terraformbuild081021'
               backendAzureRmContainerName: 'tfstate'
               backendAzureRmKey: 'demo.terraform.tfstate'
           - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
