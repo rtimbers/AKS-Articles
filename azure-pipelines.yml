@@ -1,35 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@rtimbers 
-nyuen
-/
-AKS-Articles
-Public
-3
-13
-52
-Code
-Issues
-1
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-AKS-Articles/1-terraform/azure-pipelines.yml
-
-Nicolas Yuen moving pipeline file
-Latest commit 3d4d01d on Aug 20, 2019
- History
- 0 contributors
-82 lines (77 sloc)  3.16 KB
-   
 # Starter pipeline
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
