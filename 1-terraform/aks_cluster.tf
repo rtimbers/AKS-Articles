@@ -10,7 +10,7 @@ resource "azurerm_kubernetes_cluster" "aks_k2" {
   dns_prefix          = var.dns_name
   kubernetes_version  = var.kubernetes_version
 
-  dynamic "agent_pool_profile" {
+  dynamic "default_node_pool" {
     for_each = var.agent_pools
     iterator = pool
     content {
@@ -57,8 +57,10 @@ resource "azurerm_kubernetes_cluster" "aks_k2" {
 
 output "client_certificate" {
   value = "${azurerm_kubernetes_cluster.aks_k2.kube_config.0.client_certificate}"
+  "sensitive": true
 }
 
 output "kube_config" {
   value = "${azurerm_kubernetes_cluster.aks_k2.kube_config_raw}"
+  "sensitive": true
 }
