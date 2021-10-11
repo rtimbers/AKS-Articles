@@ -39,7 +39,7 @@ variable "admin_username" {
 # Specify a valid kubernetes version
 variable "kubernetes_version" {
   type    = string
-  default = "1.14.3"
+  default = "1.21.2"
 }
 
 #AKS Agent pools
